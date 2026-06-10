@@ -40,7 +40,7 @@ jobs:
         run: echo ${{ vars.DISPLAY_TEXT }}
 
   staging-deploy:
-    if: github.event_name == 'release'
+    if: github.event.inputs.environment == 'staging' # github.event_name == 'release'
     runs-on: ubuntu-latest
     environment: staging
       
