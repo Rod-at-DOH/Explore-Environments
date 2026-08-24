@@ -22,17 +22,14 @@ on:
           - development
           - staging
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 
   development-deploy:
-    # if: inputs.environment == 'development' # github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'development') }}
     runs-on: ubuntu-latest
     environment: development
       
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v6
 
       - name: Debug trigger event
@@ -41,19 +38,15 @@ jobs:
           echo "Event action: ${{ github.event.action }}"
           echo "Ref: ${{ github.ref }}"
 
-      # Runs a single command using the runners shell
       - name: Print value from ENVIRONMENT
         run: echo ${{ vars.DISPLAY_TEXT }}
 
   staging-deploy:
-    # if: inputs.environment == 'staging' # github.event_name == 'release'
-    needs: development-deploy
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging' }}
     runs-on: ubuntu-latest
     environment: staging
       
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v6
 
       - name: Debug trigger event
@@ -62,6 +55,5 @@ jobs:
           echo "Event action: ${{ github.event.action }}"
           echo "Ref: ${{ github.ref }}"
 
-      # Runs a single command using the runners shell
       - name: Print value from ENVIRONMENT
         run: echo ${{ vars.DISPLAY_TEXT }}
